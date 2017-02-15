@@ -54,7 +54,7 @@ static NSString *const kMITDiningLinksCell = @"kMITDiningLinksCell";
     
     switch (section) {
         case kMITVenueListSectionAnnouncements:
-            return self.diningData.announcementsHTML ? @"ANNOUNCEMENTS" : nil;
+            return [self announcementsHTML] ? @"ANNOUNCEMENTS" : nil;
             break;
         case kMITVenueListSectionVenues:
             return @"VENUES";
@@ -72,7 +72,7 @@ static NSString *const kMITDiningLinksCell = @"kMITDiningLinksCell";
 {
     switch (section) {
         case kMITVenueListSectionAnnouncements:
-            return self.diningData.announcementsHTML ? 1 : 0;
+            return [self announcementsHTML] ? 1 : 0;
             break;
         case kMITVenueListSectionVenues:
             return self.houseVenues.count;
@@ -134,7 +134,7 @@ static NSString *const kMITDiningLinksCell = @"kMITDiningLinksCell";
         cell.textLabel.font = [UIFont systemFontOfSize:17.0];
     }
     
-    cell.textLabel.text = [[self.diningData.announcementsHTML stringByStrippingTags] stringByDecodingXMLEntities];
+    cell.textLabel.text = [[[self announcementsHTML] stringByStrippingTags] stringByDecodingXMLEntities];
     
     return cell;
 }
@@ -163,7 +163,7 @@ static NSString *const kMITDiningLinksCell = @"kMITDiningLinksCell";
             MITSingleWebViewCellTableViewController *vc = [[MITSingleWebViewCellTableViewController alloc] init];
             vc.title = @"Announcements";
             vc.webViewInsets = UIEdgeInsetsMake(10, 10, 10, 10);
-            vc.htmlContent = self.diningData.announcementsHTML;
+            vc.htmlContent = [self announcementsHTML];
             
             [self.navigationController pushViewController:vc animated:YES];
         }
@@ -211,6 +211,14 @@ static NSString *const kMITDiningLinksCell = @"kMITDiningLinksCell";
     self.diningLinks = [diningData.links array];
 
     [self.tableView reloadData];
+}
+
+- (NSString *)announcementsHTML {
+    if ([self.diningData.announcementsHTML isEqualToString:@"<ul><li>&nbsp;</li></ul>"]) {
+        return nil;
+    } else {
+        return self.diningData.announcementsHTML;
+    }
 }
 
 @end
